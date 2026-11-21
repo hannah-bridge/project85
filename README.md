@@ -1,4 +1,6 @@
-# Project 85
+# Project 85 – Version 2
+
+Updated warm-neutral and blush-pink visual theme, minimalist P85 app icon, matching settings cog, and refreshed offline cache. Existing app data continues to use the same local storage key (`project85`).
 
 A lightweight, installable personal fitness and nutrition tracker.
 

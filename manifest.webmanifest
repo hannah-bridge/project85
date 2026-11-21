@@ -3,7 +3,19 @@
   "short_name": "Project 85",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#f5f5ef",
-  "theme_color": "#24352d",
-  "description": "Personal workout, meal and progress tracker."
+  "background_color": "#F7F3EF",
+  "theme_color": "#EADDD7",
+  "description": "Personal workout, meal and progress tracker.",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
