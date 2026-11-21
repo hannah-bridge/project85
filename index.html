@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#24352d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Project 85">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Project 85 | Fitness & Nutrition</title>
+<style>
+:root{--ink:#24352d;--muted:#68766e;--paper:#f5f5ef;--card:#fff;--line:#e3e7df;--green:#52745e;--pale:#e8efe8;--orange:#bd8052;--shadow:0 8px 24px rgba(31,48,38,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:88px}
+header{background:var(--ink);color:#fff;padding:22px 18px 20px;border-radius:0 0 24px 24px}
+.topline{display:flex;justify-content:space-between;align-items:center}.brand{font-size:12px;letter-spacing:2px;text-transform:uppercase;opacity:.75}.date{font-size:12px;opacity:.8}
+h1{font-size:27px;margin:12px 0 5px}header p{margin:0;color:#d7e1d8;font-size:13px}
+main{max-width:720px;margin:auto;padding:17px 15px 25px}.view{display:none}.view.active{display:block}
+h2{font-size:20px;margin:8px 0 14px}h3{font-size:15px;margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:16px;margin:12px 0;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.metric{padding:14px;background:var(--pale);border-radius:14px}.metric small{display:block;color:var(--muted);font-size:11px}.metric strong{display:block;font-size:23px;margin:4px 0}.metric span{font-size:11px;color:var(--muted)}
+.row{display:flex;justify-content:space-between;gap:12px;align-items:center}.muted{color:var(--muted)}.small{font-size:12px}
+.progress{height:8px;background:#edf0eb;border-radius:9px;overflow:hidden;margin:9px 0}.progress i{display:block;height:100%;background:var(--green);border-radius:9px}
+button,.btn{border:0;border-radius:12px;background:var(--ink);color:#fff;padding:11px 14px;font-weight:600;font-size:13px;cursor:pointer}
+button.secondary{background:var(--pale);color:var(--ink)}button.ghost{background:transparent;color:var(--green);padding:7px}
+button:disabled{opacity:.4}.tabs{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:9px 4px calc(9px + env(safe-area-inset-bottom));z-index:5}
+.tabs button{background:transparent;color:var(--muted);padding:7px 4px;flex:1;font-size:11px}.tabs button.active{color:var(--green);background:var(--pale)}
+.tabs b{display:block;font-size:18px;margin-bottom:3px}
+.exercise,.meal{border-top:1px solid var(--line);padding:12px 0}.exercise:first-of-type,.meal:first-of-type{border-top:0}
+input,select,textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font:inherit;margin:5px 0 10px}
+label{font-size:12px;color:var(--muted);display:block}form .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.check{display:flex;align-items:center;gap:9px}.check input{width:20px;height:20px;margin:0;accent-color:var(--green)}
+.pill{display:inline-block;background:var(--pale);color:var(--green);padding:5px 9px;border-radius:99px;font-size:11px;font-weight:700}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{flex:1}
+canvas{width:100%;height:180px}
+.empty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
+hr{border:0;border-top:1px solid var(--line);margin:14px 0}
+.notice{background:#fff8ed;border:1px solid #f0dfc9;padding:12px;border-radius:12px;font-size:12px;color:#77583e;line-height:1.5}
+@media(min-width:600px){main{padding-top:24px}.grid.four{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<header>
+ <div class="topline"><div class="brand">PROJECT 85</div><div class="date" id="today"></div></div>
+ <h1>Your progress, one day at a time.</h1>
+ <p>Stronger glutes · Stronger core · Sustainable fat loss</p>
+</header>
+<main>
+<section id="home" class="view active">
+ <h2>Today's overview</h2>
+ <div class="grid">
+  <div class="metric"><small>Calories logged</small><strong id="homeCalories">0</strong><span>of 1,800 kcal</span><div class="progress"><i id="calBar" style="width:0%"></i></div></div>
+  <div class="metric"><small>Protein logged</small><strong id="homeProtein">0g</strong><span>of 135g</span><div class="progress"><i id="proteinBar" style="width:0%"></i></div></div>
+  <div class="metric"><small>Steps</small><strong id="homeSteps">0</strong><span>Daily aim: 8,000</span></div>
+  <div class="metric"><small>Workouts this week</small><strong id="homeWorkouts">0/2</strong><span>Target: 2 sessions</span></div>
+ </div>
+ <div class="card"><div class="row"><h3>Today's plan</h3><span class="pill" id="todayType">Recovery / walking</span></div><p class="muted small" id="todayHint">A little movement still counts. Take a short walk and keep meals balanced.</p><button class="secondary" onclick="show('workouts')">View workout plan</button></div>
+ <div class="card"><div class="row"><h3>Food diary</h3><button class="ghost" onclick="show('food')">+ Add food</button></div><div id="homeFood" class="muted small">No food logged yet today.</div></div>
+ <div class="card"><div class="row"><h3>Quick check-in</h3><span class="small muted">Daily</span></div><label>Steps today</label><input id="stepsInput" type="number" min="0" placeholder="e.g. 6500"><button onclick="saveSteps()">Save steps</button></div>
+</section>
+
+<section id="workouts" class="view">
+ <h2>Workout schedule</h2>
+ <p class="muted small">Two full-body sessions with a glute focus. Start with comfortable weights and prioritise good technique.</p>
+ <div class="card"><div class="row"><h3>Day 1 · Glutes, legs & core</h3><span class="pill">50–60 min</span></div><div id="workout1"></div><div class="actions"><button onclick="completeWorkout('A')">Mark session complete</button><button class="secondary" onclick="resetWorkout('A')">Reset</button></div></div>
+ <div class="card"><div class="row"><h3>Day 2 · Full body & glutes</h3><span class="pill">50–60 min</span></div><div id="workout2"></div><div class="actions"><button onclick="completeWorkout('B')">Mark session complete</button><button class="secondary" onclick="resetWorkout('B')">Reset</button></div></div>
+ <div class="notice">Progression: when you can complete the top end of the rep range for every set with controlled form, increase the weight by the smallest available increment next time. Leave roughly 2–3 good reps in reserve.</div>
+ <div class="card"><h3>Workout history</h3><div id="workoutHistory" class="muted small">No sessions recorded yet.</div></div>
+</section>
+
+<section id="food" class="view">
+ <h2>Meal plan & food diary</h2>
+ <div class="card"><div class="row"><h3>Daily targets</h3><span class="pill">Starting targets</span></div><div class="grid"><div class="metric"><small>Calories</small><strong>1,800</strong><span>kcal per day</span></div><div class="metric"><small>Protein</small><strong>135g</strong><span>per day</span></div></div><p class="small muted">Targets are estimates. Review your weight trend, energy and training performance over 3–4 weeks before adjusting.</p></div>
+ <div class="card"><h3>Planned meals · example day</h3><div id="plannedMeals"></div><p class="small muted">Use the seven-day meal rotation from your plan; swap meals freely. Log what you actually eat below.</p></div>
+ <div class="card"><h3>Log food eaten</h3><form id="foodForm"><label>Food or meal</label><input id="foodName" required placeholder="e.g. Chicken rice bowl"><div class="two"><div><label>Calories (kcal)</label><input id="foodKcal" type="number" min="0" required placeholder="450"></div><div><label>Protein (g)</label><input id="foodProt" type="number" min="0" step=".1" required placeholder="35"></div></div><button type="submit">Add to food diary</button></form></div>
+ <div class="card"><div class="row"><h3>Today's entries</h3><button class="ghost" onclick="clearFood()">Clear today's log</button></div><div id="foodEntries" class="muted small">Nothing logged yet.</div></div>
+</section>
+
+<section id="progress" class="view">
+ <h2>Progress & statistics</h2>
+ <div class="card"><h3>Record a check-in</h3><form id="statsForm"><div class="two"><div><label>Weight (kg)</label><input id="weight" type="number" step=".1" min="0" placeholder="85"></div><div><label>Waist (cm)</label><input id="waist" type="number" step=".1" min="0" placeholder="Optional"></div><div><label>Hips (cm)</label><input id="hips" type="number" step=".1" min="0" placeholder="Optional"></div><div><label>Notes</label><input id="notes" placeholder="Energy, sleep, cycle..."></div></div><button type="submit">Save check-in</button></form></div>
+ <div class="grid"><div class="metric"><small>Latest weight</small><strong id="latestWeight">85kg</strong><span>Starting reference</span></div><div class="metric"><small>Change from start</small><strong id="weightChange">—</strong><span>Based on recorded check-ins</span></div></div>
+ <div class="card"><h3>Weight trend</h3><canvas id="weightChart" width="600" height="220"></canvas><div id="chartEmpty" class="empty">Add at least two weight check-ins to see your trend.</div></div>
+ <div class="card"><h3>Check-in history</h3><div id="statsHistory" class="muted small">No check-ins yet.</div></div>
+ <div class="notice">Progress photos are best kept in your iPhone Photos app. This tracker stores measurements and logs on this device; it does not upload photos.</div>
+</section>
+
+<section id="settings" class="view">
+ <h2>Settings & your data</h2>
+ <div class="card"><h3>Your current plan</h3><label>Daily calorie target</label><input id="targetKcal" type="number" value="1800"><label>Daily protein target (g)</label><input id="targetProtein" type="number" value="135"><label>Daily step target</label><input id="targetSteps" type="number" value="8000"><button onclick="saveTargets()">Save targets</button></div>
+ <div class="card"><h3>Backup and share your progress</h3><p class="small muted">Export a JSON backup to keep your data safe, or export a weekly summary to share in a chat for a plan review.</p><div class="actions"><button onclick="exportData()">Export full backup</button><button class="secondary" onclick="exportSummary()">Export progress summary</button></div><hr><label>Import a previous backup</label><input type="file" id="importFile" accept="application/json"><button class="secondary" onclick="importData()">Import backup</button></div>
+ <div class="card"><h3>Privacy & storage</h3><p class="small muted">Your entries are saved in this browser on this device. They are not automatically sent to ChatGPT or synced to another phone. Export a backup regularly, especially before clearing browser data.</p><button class="secondary" onclick="if(confirm('Delete all Project 85 data from this device? This cannot be undone unless you exported a backup.')){localStorage.removeItem('project85');location.reload()}">Delete all my data</button></div>
+ <div class="notice"><b>Health note:</b> 1,800 kcal is an initial estimate, not a medical prescription. Adjust if you feel unusually tired, hungry or your training suffers. Seek a qualified clinician or dietitian for individual medical nutrition advice.</div>
+</section>
+</main>
+<nav class="tabs">
+ <button class="active" data-view="home" onclick="show('home')"><b>⌂</b>Home</button>
+ <button data-view="workouts" onclick="show('workouts')"><b>▣</b>Workouts</button>
+ <button data-view="food" onclick="show('food')"><b>◉</b>Food</button>
+ <button data-view="progress" onclick="show('progress')"><b>↗</b>Progress</button>
+ <button data-view="settings" onclick="show('settings')"><b>⚙</b>Settings</button>
+</nav>
+<script>
+const KEY='project85';
+const defaults={targets:{kcal:1800,protein:135,steps:8000},foods:[],stats:[],steps:{},workouts:[]};
+let data=load();
+const A=[['Goblet squat','3 × 10–12','Legs & glutes'],['Dumbbell Romanian deadlift','3 × 10–12','Hamstrings & glutes'],['Hip thrust','3 × 10–12','Glutes'],['Hip abduction machine','3 × 15–20','Glute medius'],['Plank','3 × 20–40 sec','Core'],['Dead bug','3 × 10 each side','Core']];
+const B=[['Reverse lunge','3 × 10 each leg','Glutes & legs'],['Glute bridge','3 × 12–15','Glutes'],['Lat pulldown','3 × 10–12','Back'],['Dumbbell chest press','3 × 10–12','Chest'],['Cable glute kickback','3 × 12–15 each leg','Glutes'],['Reverse crunch','3 × 12–15','Core']];
+const meals=[['Breakfast','200g 0% Greek yoghurt, 40g oats, berries and a small banana','~380 kcal · ~30g protein'],['Lunch','150g raw chicken breast, 60g dry rice, vegetables and 1 tsp olive oil','~480 kcal · ~40g protein'],['Snack','200g cottage cheese and an apple','~230 kcal · ~22g protein'],['Dinner','Lean beef chilli with kidney beans, tomatoes, vegetables and rice','~550 kcal · ~40g protein'],['Evening snack','150g Greek yoghurt and a little honey','~130 kcal · ~15g protein']];
+function load(){try{return {...defaults,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){return structuredClone(defaults)}}
+function save(){localStorage.setItem(KEY,JSON.stringify(data));render()}
+function day(){return new Date().toISOString().slice(0,10)}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function show(id){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x.dataset.view===id));window.scrollTo(0,0);render()}
+function todayFoods(){return data.foods.filter(x=>x.date===day())}
+function render(){
+ const foods=todayFoods(),k=foods.reduce((s,x)=>s+x.kcal,0),p=foods.reduce((s,x)=>s+x.protein,0),steps=data.steps[day()]||0;
+ document.getElementById('homeCalories').textContent=k;document.getElementById('homeProtein').textContent=p+'g';document.getElementById('calBar').style.width=Math.min(100,k/data.targets.kcal*100)+'%';document.getElementById('proteinBar').style.width=Math.min(100,p/data.targets.protein*100)+'%';document.getElementById('homeSteps').textContent=steps.toLocaleString();document.getElementById('stepsInput').value=steps;
+ const week=new Date();week.setDate(week.getDate()-((week.getDay()+6)%7));const monday=week.toISOString().slice(0,10);const count=data.workouts.filter(x=>x.date>=monday).length;document.getElementById('homeWorkouts').textContent=Math.min(count,2)+'/2';
+ const dow=new Date().getDay();document.getElementById('todayType').textContent=dow===1?'Day 1 · Glutes & core':dow===5?'Day 2 · Full body':'Recovery / walking';document.getElementById('todayHint').textContent=(dow===1?'Today is your first glute-focused session. Warm up for 5–8 minutes before lifting.':dow===5?'Today is your second strength session. Record your weights and reps.':'Aim for comfortable movement, recovery and balanced meals today.');
+ document.getElementById('homeFood').innerHTML=foods.length?foods.map(x=>`<div class="row"><span>${esc(x.name)}</span><span>${x.kcal} kcal · ${x.protein}g</span></div>`).join(''):'No food logged yet today.';
+ document.getElementById('workout1').innerHTML=exerciseHTML(A,'A');document.getElementById('workout2').innerHTML=exerciseHTML(B,'B');
+ document.getElementById('plannedMeals').innerHTML=meals.map(m=>`<div class="meal"><b>${m[0]}</b><div>${m[1]}</div><div class="small muted">${m[2]}</div></div>`).join('');
+ document.getElementById('foodEntries').innerHTML=foods.length?foods.map((x,i)=>`<div class="row exercise"><span>${esc(x.name)}<br><span class="small muted">${x.kcal} kcal · ${x.protein}g protein</span></span><button class="secondary" onclick="deleteFood('${x.id}')">Remove</button></div>`).join(''):'Nothing logged yet.';
+ document.getElementById('workoutHistory').innerHTML=data.workouts.length?data.workouts.slice().reverse().map(x=>`<div class="exercise">${x.date} · ${x.name}</div>`).join(''):'No sessions recorded yet.';
+ const latest=data.stats[data.stats.length-1];document.getElementById('latestWeight').textContent=latest?.weight?latest.weight+'kg':'85kg';const first=data.stats.find(x=>x.weight);document.getElementById('weightChange').textContent=latest?.weight&&first?.weight?(latest.weight-first.weight>0?'+':'')+(latest.weight-first.weight).toFixed(1)+'kg':'—';
+ document.getElementById('statsHistory').innerHTML=data.stats.length?data.stats.slice().reverse().map(x=>`<div class="exercise"><b>${x.date}</b> · ${x.weight||'—'}kg · Waist ${x.waist||'—'}cm · Hips ${x.hips||'—'}cm ${x.notes?'· '+esc(x.notes):''}</div>`).join(''):'No check-ins yet.';
+ document.getElementById('targetKcal').value=data.targets.kcal;document.getElementById('targetProtein').value=data.targets.protein;document.getElementById('targetSteps').value=data.targets.steps;
+ drawChart();
+}
+function exerciseHTML(arr,id){return arr.map((x,i)=>`<div class="exercise"><div class="row"><div><b>${i+1}. ${x[0]}</b><div class="small muted">${x[1]} · ${x[2]}</div></div><label class="check"><input type="checkbox" id="ex${id}${i}"> Done</label></div><div class="two"><div><label>Weight used (kg)</label><input type="number" min="0" step=".5" id="wt${id}${i}" placeholder="Optional"></div><div><label>Reps completed</label><input type="text" id="rp${id}${i}" placeholder="e.g. 12 / 12 / 10"></div></div></div>`).join('')}
+function completeWorkout(id){const arr=id==='A'?A:B;const checked=arr.filter((_,i)=>document.getElementById('ex'+id+i).checked).length;if(checked===0&&!confirm('No exercises are ticked. Mark the whole session complete anyway?'))return;data.workouts.push({id,date:day(),name:id==='A'?'Day 1 – Glutes, legs & core':'Day 2 – Full body & glutes',completed:checked,details:arr.map((x,i)=>({exercise:x[0],done:document.getElementById('ex'+id+i).checked,weight:document.getElementById('wt'+id+i).value,reps:document.getElementById('rp'+id+i).value}))});save();alert('Workout saved. Great work!')}
+function resetWorkout(id){(id==='A'?A:B).forEach((_,i)=>{document.getElementById('ex'+id+i).checked=false;document.getElementById('wt'+id+i).value='';document.getElementById('rp'+id+i).value=''})}
+function saveSteps(){data.steps[day()]=Number(document.getElementById('stepsInput').value)||0;save()}
+document.getElementById('foodForm').addEventListener('submit',e=>{e.preventDefault();data.foods.push({id:Date.now().toString(),date:day(),name:document.getElementById('foodName').value,kcal:Number(document.getElementById('foodKcal').value),protein:Number(document.getElementById('foodProt').value)});e.target.reset();save()});
+function deleteFood(id){data.foods=data.foods.filter(x=>x.id!==id);save()}
+function clearFood(){if(confirm("Clear today's food entries?")){data.foods=data.foods.filter(x=>x.date!==day());save()}}
+document.getElementById('statsForm').addEventListener('submit',e=>{e.preventDefault();const entry={date:day(),weight:Number(document.getElementById('weight').value)||null,waist:Number(document.getElementById('waist').value)||null,hips:Number(document.getElementById('hips').value)||null,notes:document.getElementById('notes').value};if(!entry.weight&&!entry.waist&&!entry.hips&&!entry.notes){alert('Add at least one measurement or note.');return}data.stats.push(entry);e.target.reset();save()});
+function saveTargets(){data.targets={kcal:Number(targetKcal.value)||1800,protein:Number(targetProtein.value)||135,steps:Number(targetSteps.value)||8000};save();alert('Targets saved.')}
+function download(name,content,type){const a=document.createElement('a'),url=URL.createObjectURL(new Blob([content],{type}));a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
+function exportData(){download('project85-backup-'+day()+'.json',JSON.stringify(data,null,2),'application/json')}
+function exportSummary(){const s={generated:day(),targets:data.targets,latestCheckIn:data.stats[data.stats.length-1]||null,checkIns:data.stats,workouts:data.workouts,foodLog:data.foods,steps:data.steps};download('project85-progress-'+day()+'.json',JSON.stringify(s,null,2),'application/json')}
+function importData(){const f=document.getElementById('importFile').files[0];if(!f){alert('Choose a backup JSON file first.');return}const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x.targets||!Array.isArray(x.foods)||!Array.isArray(x.stats))throw Error();data={...defaults,...x};save();alert('Backup imported.')}catch(e){alert('That file does not look like a Project 85 backup.')}};r.readAsText(f)}
+function drawChart(){const c=document.getElementById('weightChart'),ctx=c.getContext('2d'),items=data.stats.filter(x=>x.weight);ctx.clearRect(0,0,c.width,c.height);document.getElementById('chartEmpty').style.display=items.length>=2?'none':'block';if(items.length<2)return;const vals=items.map(x=>x.weight),min=Math.min(...vals)-1,max=Math.max(...vals)+1;ctx.strokeStyle='#52745e';ctx.lineWidth=4;ctx.beginPath();items.forEach((x,i)=>{const px=35+i*(c.width-70)/(items.length-1),py=c.height-30-(x.weight-min)/(max-min)*(c.height-65);i?ctx.lineTo(px,py):ctx.moveTo(px,py)});ctx.stroke();items.forEach((x,i)=>{const px=35+i*(c.width-70)/(items.length-1),py=c.height-30-(x.weight-min)/(max-min)*(c.height-65);ctx.fillStyle='#24352d';ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);ctx.fill()})}
+document.getElementById('today').textContent=new Date().toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'});
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+render();
+</script>
+</body></html>

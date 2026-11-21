@@ -1,0 +1,9 @@
+{
+  "name": "Project 85 Fitness & Nutrition",
+  "short_name": "Project 85",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5f5ef",
+  "theme_color": "#24352d",
+  "description": "Personal workout, meal and progress tracker."
+}
